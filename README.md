@@ -4,6 +4,8 @@ Reproducible code for the study:
 
 "Development and validation of an explainable survival machine learning model to predict chronic kidney disease among people with HIV: a multicenter prospective cohort study."
 
+The example dataset is a simplified demonstration dataset and includes only the predictors used in the final model. Therefore, the feature selection module in the example workflow is intended to demonstrate the code pipeline rather than to reproduce the full candidate predictor screening process used in the original study.
+
 The workflow includes data splitting, feature selection, model training, model evaluation, and SHAP-based model explainability.
 
 ---
