@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.idea/
+.DS_Store
+Thumbs.db
+results/
+data/split_data/
