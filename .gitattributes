@@ -1,0 +1,2 @@
+# Preserve released bytes, including synthetic-data provenance hashes.
+* -text

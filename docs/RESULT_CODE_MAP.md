@@ -1,0 +1,23 @@
+# Result to code mapping
+
+This mapping follows Supplementary_material_for_final_review.docx dated 14 September 2026. Synthetic runs do not reproduce clinical estimates.
+
+| Result | Retained code family | Scope |
+|---|---|---|
+| Main Fig. 1 | dynamic/01–06; separate editable PPT | Study design and prediction landmarks |
+| Main Table 2, Fig. 2; S3a–S3c, Fig. S2 | dynamic/07–11d | Four-model development out-of-fold evaluation |
+| S1a–S1b, S2a–S2b | cohort summaries and model-ready input contracts | Source-cohort counts differ from model-eligible risk sets |
+| S4a–S4b | legacy score comparison sources | Exploratory adapted D:A:D/VHA at landmark 0; source-date limitation |
+| S5a–S5d, Fig. S3 | external/01–04 | Frozen primary external validation |
+| S6a–S6c, Fig. S4 | external/05–07 | Secondary local recalibration |
+| Main Fig. 3, S7a–S7b | risk_groups/development | Development tertiles |
+| S8a–S8d, Fig. S5 | risk_groups/external | Transported cutpoints and exploratory local tertiles |
+| S9a–S9b, Fig. S6 | risk_groups | Exploratory fixed bands |
+| Main Fig. 4, S10a–S10b, Fig. S7 | interpretation; dynamic/12a–12b | Prediction attribution, not causal effects |
+| S11a–S11b | interpretation/03–06 | Fixed-model temporal and grouped occlusion |
+| S12a–S12d | sensitivity/centre_rotation_3fold_3seed.py | Post hoc, not fully nested |
+| Fig. S8 | sensitivity/three_seed | Additional training-seed analyses |
+| S13 | sensitivity/art_event_accounting_table.py | 2,491 source events, 469 recoded, 2,022 retained |
+| S14, Fig. S9 | sensitivity/art_verify_20260914.py; plot_art_20260914.py | Corrected frozen-primary six-landmark evaluation |
+
+The upstream original observation/imputation provenance and clinical diagnosis extraction rules remain unresolved. A model-ready field dictionary is not a verified clinical diagnostic algorithm. The reserved internal test split is not the source of reported OOF performance.

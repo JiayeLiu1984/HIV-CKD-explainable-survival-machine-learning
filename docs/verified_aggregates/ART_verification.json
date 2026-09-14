@@ -1,0 +1,10 @@
+{
+  "replicates": 1000,
+  "seed_start": 2026091400,
+  "bootstrap_unit": "development participant; same multiplicities across all six landmarks",
+  "calibration": "frozen primary cross-fitted calibration; no model or calibration refitting",
+  "censoring_reference": "fixed original sensitivity risk set at each landmark",
+  "ICI": "size-weighted absolute difference between mean predicted risk and Kaplan-Meier risk within fixed full-sample prediction deciles",
+  "point_matches_archived": true,
+  "elapsed_seconds": 213.06927251815796
+}

@@ -1,0 +1,44 @@
+{
+  "synthetic_only": true,
+  "tested_models": [
+    "Landmark Cox",
+    "Landmark RSF",
+    "RNN",
+    "LSTM-v2"
+  ],
+  "development_subjects": 600,
+  "external_subjects": 240,
+  "patient_folds": 5,
+  "neural_epochs": 2,
+  "bootstrap_replicates": 20,
+  "unit_tests_passed": 6,
+  "three_seed_training_completed": true,
+  "full_study_numeric_reproduction": false,
+  "full_budget_sources_syntax_checked": true,
+  "runtime_versions": {
+    "numpy": "2.2.0",
+    "pandas": "2.3.2",
+    "scipy": "1.15.3",
+    "scikit-learn": "1.7.1",
+    "scikit-survival": "0.25.0",
+    "lifelines": "0.30.0",
+    "torch": "2.13.0+cpu",
+    "optuna": "5.0.0",
+    "matplotlib": "3.10.6",
+    "joblib": "1.5.2",
+    "shap": "0.48.0",
+    "statsmodels": "0.15.0",
+    "openpyxl": "3.1.5",
+    "tqdm": "4.67.1",
+    "numba": "0.61.2"
+  },
+  "interpretation": {
+    "synthetic_only": true,
+    "tested_origins": 12,
+    "IG_steps": 128,
+    "max_completeness_residual": 1.9650906324386597e-06,
+    "future_perturbation_max_risk_change": 0.0,
+    "reference": "Means from training patients excluding evaluated fold; landmark and masks fixed.",
+    "scope": "Native synthetic LSTM risk before calibration; full formal calibrated study IG is retained separately."
+  }
+}

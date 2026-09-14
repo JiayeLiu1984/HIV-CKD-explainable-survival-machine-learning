@@ -1,0 +1,56 @@
+column,dtype,role,description
+ID,object,identifier/time,Artificial value; see generator. Cumulative ART columns use months.
+data,object,identifier/time,Synthetic centre label; disjoint IDs across centres.
+time_bin,int64,identifier/time,"Six-month bin, month = 6 * time_bin."
+month,int64,identifier/time,Artificial value; see generator. Cumulative ART columns use months.
+Age,float64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+BMI,float64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+Sex,object,predictor,Artificial value; see generator. Cumulative ART columns use months.
+Marriage,object,predictor,Artificial value; see generator. Cumulative ART columns use months.
+Course,object,predictor,Artificial value; see generator. Cumulative ART columns use months.
+WHOstage,object,predictor,Artificial value; see generator. Cumulative ART columns use months.
+Oppinfection,int64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+HIVRNA_log10,float64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+CD4,float64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+CD8,float64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+Urea,float64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+WBC,float64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+PLT,float64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+HB,float64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+TC,float64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+TG,float64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+HDL,float64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+LDL,float64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+GLU,float64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+ALT,float64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+AST,float64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+eGFR,float64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+CVD_status,int64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+diabetes_status,int64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+hypertension_status,int64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+hypercholesterolemia_status,int64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+HBV_status,int64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+HCV_status,int64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+antidiabetic_med,int64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+antihypertensive_med,int64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+antilipid_med,int64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+current_TDF_NNRTI_3TC_FTC,int64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+current_TDF_PI_3TC_FTC,int64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+current_nonTDF_PI,int64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+current_BIC_FTC_TAF,int64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+current_EVGc_FTC_TAF,int64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+current_TDF_INSTI_3TC_FTC,int64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+current_nonTDF_DTG,int64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+current_nonTDF_traditional_NNRTI,int64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+TDF_NNRTI_3TC_FTC_cum_month,float64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+TDF_PI_3TC_FTC_cum_month,float64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+nonTDF_PI_cum_month,float64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+BIC_FTC_TAF_cum_month,float64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+EVGc_FTC_TAF_cum_month,float64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+TDF_INSTI_3TC_FTC_cum_month,float64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+nonTDF_DTG_cum_month,float64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+nonTDF_traditional_NNRTI_cum_month,float64,predictor,Artificial value; see generator. Cumulative ART columns use months.
+interval,float64,outcome,Event/censor time in months from ART initiation; repeated per patient.
+CKDstatus,int64,outcome,"Single-event CKD outcome: 1=event, 0=right censoring. No competing-risk model."
+synthetic_art_affected,int64,outcome,Simulated outcome sensitivity flag; NEVER a predictor.
+synthetic,bool,identifier/time,Artificial value; see generator. Cumulative ART columns use months.

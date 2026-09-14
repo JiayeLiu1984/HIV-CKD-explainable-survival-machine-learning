@@ -1,0 +1,15 @@
+{
+  "synthetic_only": true,
+  "generator": "module_00_generate_synthetic_data.py",
+  "seed": 20260912,
+  "development_n": 600,
+  "external_n": 240,
+  "origin": "Independent NumPy draws with manually specified distributions; no patient rows, cohort-fitted generator, or trained model used.",
+  "warning": "Tests software execution only; cannot reproduce manuscript estimates.",
+  "files": {
+    "data_dictionary.csv": "35fd474ed2a62c59013b438286ccd6755537d31b447c1208960860bed9953c92",
+    "example_dataset.csv": "9a34417f8237da7f7bc9756934087e12624ee12f3e1062a160a06e9b1ee83310",
+    "synthetic_development.csv": "235aa1274ec53779b03173db9225662bff7262ea9236ccad6f22862d312f165e",
+    "synthetic_external.csv": "6acf86de5406aeb7f510c0e90dc39c6b6bcb2acc9d4dfe9f4ad0023d273732e4"
+  }
+}
