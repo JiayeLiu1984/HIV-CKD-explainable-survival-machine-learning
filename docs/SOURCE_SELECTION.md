@@ -1,6 +1,6 @@
 # Source selection
 
-The current dynamic notebook contains many duplicate tuning, plotting and patient-case experiments. The release selects the six-step preprocessing, Cox v5, pooled RSF, final RNN, LSTM-v2 tuning/final fit and four-model comparison. The full old CKD-ML source cells remain in legacy_baseline. Patient-specific exploratory notebooks, prior model checkpoints and outputs are not included.
+The current dynamic notebook contains many duplicate tuning, plotting and patient-case experiments. The release selects the six-step preprocessing, Cox v5, pooled RSF, final RNN, LSTM-v2 tuning/final fit and four-model comparison. The full old CKD-ML source cells remain in Git history at commit 4538bff. Patient-specific exploratory notebooks, prior model checkpoints and outputs are not included.
 
 The exact three-fold/three-seed centre-rotation code was recovered from CKD_crosscenter_TRAIN.ipynb. Earlier five-seed alternative reconstruction scripts are not part of this package.
 

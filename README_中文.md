@@ -1,23 +1,36 @@
-# CKD 动态预测代码包
+# CKD 纵向动态预测代码
 
-本包按旧 GitHub 项目的编号模块形式整理。新版主线为 Landmark Cox、Landmark RSF、RNN、LSTM-v2；旧版 CKD-ML.ipynb 的全部代码单元及原五模块另存于 `legacy_baseline/`，不与新版结果混用。
+默认主流程：**随机数据生成 → 预处理 → 四类模型训练与比较 → LSTM 外部验证 → 风险分层与解释**。
 
-## 数据
+## 一键运行
 
-`data/` 仅含程序随机生成的虚构记录：600名开发对象、240名外部对象，以及供旧版代码测试的数值型基线表。生成器不读取原始数据，也不使用真实患者训练出的生成模型。为使小样本五折测试可计算各时间窗指标，模拟事件被有意分布到六个预测窗口，不能解释为真实发病率。
-
-不提供原始/脱敏患者表、真实患者预测、真实模型权重、拟合预处理器或原 notebook 的输出。重新运行会在本地生成仅来自合成数据的中间张量和测试模型。
-
-## 运行
+使用 Python 3.10，在独立环境安装后运行：
 
 ```bash
 python -m pip install -r requirements.txt
 python scripts/run_all.py
+```
+
+默认生成600名模拟源队列对象和240名独立外部对象。源队列按患者7:3划分，70%开发集内进行五折比较，预留内部测试集不进入主OOF评价。super-landmark Cox/RSF使用历史摘要，RNN/LSTM使用截至预测时点的有序纵向历史。外部验证固定使用论文开发阶段选定的LSTM及开发集拟合的预处理和校准参数。
+
+本机默认主流程约49秒，6项完整性检查通过；不同硬件耗时不同。默认2轮神经网络训练、20次bootstrap为快速运行设置，不是论文训练预算。
+
+每次输出到独立的 `results/synthetic_*`：`evaluation/` 为四模型比较，`external_validation/` 为外部验证，`figures/` 为风险分层与示意图，`interpretation/` 为归因及验证。`RUN_SUMMARY.json` 记录参数、每步耗时与状态，`logs/` 保留完整日志。
+
+## 可选分析
+
+```bash
+python scripts/run_all.py --with-sensitivity
+python scripts/run_all.py --with-recalibration
 python scripts/run_all.py --three-seeds
 ```
 
-默认训练轮数和 bootstrap 次数较少，用于检查代码能否执行。不能把这些测试数值填入文章。正式训练、调参、校准、配对bootstrap、IG、外部验证和三折三种子中心轮转源码在 `study_sources/`；输入要求和结果对应关系见 `docs/REPRODUCTION.md`、`docs/RESULT_CODE_MAP.md`。
+敏感性分析与外部再校准不进入默认流程。正式ART分析、中心轮转、三种子分析及landmark 0的D:A:D/VHA比较仍保留于 `study_sources/`。这些完整论文源码需要配套本地输入，不能把所有历史替代版本直接串联执行。早期基线RSF/SHAP代码保存在Git历史 `4538bff`，已移出当前目录。
 
-`run_all.py` 每次创建独立输出目录。单独按00—07顺序运行模块时，共用 `results/synthetic_run`；如需换配置，请使用新的 `CKD_WORKDIR`，避免重复使用旧输出。
+## 论文可追溯性与数据说明
 
-ART 敏感性分析按六个年度 landmark 等权汇总，原模型和校准冻结的评价与二次校准结果分别报告。Landmark 0 的改编 D:A:D/VHA 比较代码位于 `study_sources/clinical_scores/`；该比较存在缺失评分项、代理变量和基线源日期待核实等限制。上游临床数据提取、插补与时间对齐仍需原始记录核实，合成数据测试不替代这些研究核查。
+见 [结果—代码映射](docs/RESULT_CODE_MAP.md)、[审稿意见—代码映射](docs/REVIEWER_CODE_MAP.md) 和 [完整分析说明](docs/REPRODUCTION.md)。
+
+仅公开独立随机生成的虚构数据，不含原始或脱敏患者记录、真实模型权重或患者级预测。模拟事件分布经过人为设置，便于小样本测试；模拟结果不能复现论文数值。完整论文预算、校准和集成源码保留在 `study_sources/`，快速示例的评价和解释范围较小。
+
+模型为单一CKD事件的右删失预测，未将死亡单独作为竞争事件。IG和遮蔽分析解释模型预测，不代表因果作用。原始临床数据提取、eGFR输入与上游插补仍需原始记录核验；代码示例不替代这些核查。

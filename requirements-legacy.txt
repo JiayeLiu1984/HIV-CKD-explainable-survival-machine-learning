@@ -1,3 +1,0 @@
--r requirements.txt
-# Only historical CKD-ML notebook variants import eli5.
-eli5>=0.14

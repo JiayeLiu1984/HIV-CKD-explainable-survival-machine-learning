@@ -60,13 +60,13 @@ def main():
     baseline=dev.loc[dev.time_bin==0,['ID','interval','CKDstatus','Age','BMI','Oppinfection']+LABS].copy()
     baseline.to_csv(DATA/'example_dataset.csv',index=False,encoding='utf-8')
     meta={'synthetic_only':True,'generator':'module_00_generate_synthetic_data.py','seed':a.seed,'development_n':a.n,'external_n':a.external_n,'origin':'Independent NumPy draws with manually specified distributions; no patient rows, cohort-fitted generator, or trained model used.','warning':'Tests software execution only; cannot reproduce manuscript estimates.'}
-    meta['files']={f.name:hashlib.sha256(f.read_bytes()).hexdigest() for f in DATA.glob('*.csv')}
-    dump_json(DATA/'SYNTHETIC_DATA_PROVENANCE.json',meta)
     records=[]
     for c in dev.columns:
         role='outcome' if c in ['interval','CKDstatus','synthetic_art_affected'] else 'identifier/time' if c in ['ID','data','month','time_bin','synthetic'] else 'predictor'
         records.append({'column':c,'dtype':str(dev[c].dtype),'role':role,'description':{'interval':'Event/censor time in months from ART initiation; repeated per patient.','time_bin':'Six-month bin, month = 6 * time_bin.','synthetic_art_affected':'Simulated outcome sensitivity flag; NEVER a predictor.','CKDstatus':'Single-event CKD outcome: 1=event, 0=right censoring. No competing-risk model.','data':'Synthetic centre label; disjoint IDs across centres.'}.get(c,'Artificial value; see generator. Cumulative ART columns use months.')})
     pd.DataFrame(records).to_csv(DATA/'data_dictionary.csv',index=False)
+    meta['files']={f.name:hashlib.sha256(f.read_bytes()).hexdigest() for f in DATA.glob('*.csv')}
+    dump_json(DATA/'SYNTHETIC_DATA_PROVENANCE.json',meta)
     print(f'Generated {a.n} development and {a.external_n} external fictional subjects.')
 
 if __name__=='__main__':main()

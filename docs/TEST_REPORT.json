@@ -1,20 +1,78 @@
 {
   "synthetic_only": true,
+  "settings": {
+    "n": 600,
+    "external_n": 240,
+    "epochs": 2,
+    "bootstrap": 20,
+    "with_sensitivity": false,
+    "three_seeds": false,
+    "with_recalibration": false
+  },
+  "stages": [
+    {
+      "name": "module_00_generate_synthetic_data.py",
+      "seconds": 1.02,
+      "returncode": 0,
+      "log": "logs\\module_00_generate_synthetic_data.py.log"
+    },
+    {
+      "name": "module_01_data_preprocessing.py",
+      "seconds": 2.52,
+      "returncode": 0,
+      "log": "logs\\module_01_data_preprocessing.py.log"
+    },
+    {
+      "name": "module_02_model_training.py",
+      "seconds": 26.08,
+      "returncode": 0,
+      "log": "logs\\module_02_model_training.py.log"
+    },
+    {
+      "name": "module_03_model_evaluation.py",
+      "seconds": 4.8,
+      "returncode": 0,
+      "log": "logs\\module_03_model_evaluation.py.log"
+    },
+    {
+      "name": "module_04_external_validation.py",
+      "seconds": 4.94,
+      "returncode": 0,
+      "log": "logs\\module_04_external_validation.py.log"
+    },
+    {
+      "name": "module_05_risk_groups_and_figures.py",
+      "seconds": 3.59,
+      "returncode": 0,
+      "log": "logs\\module_05_risk_groups_and_figures.py.log"
+    },
+    {
+      "name": "module_06_interpretation.py",
+      "seconds": 4.86,
+      "returncode": 0,
+      "log": "logs\\module_06_interpretation.py.log"
+    },
+    {
+      "name": "integrity_tests",
+      "seconds": 0.91,
+      "returncode": 0,
+      "log": "logs\\integrity_tests.log"
+    }
+  ],
+  "status": "passed",
+  "elapsed_seconds": 48.7,
   "tested_models": [
     "Landmark Cox",
     "Landmark RSF",
     "RNN",
     "LSTM-v2"
   ],
-  "development_subjects": 600,
-  "external_subjects": 240,
-  "patient_folds": 5,
-  "neural_epochs": 2,
-  "bootstrap_replicates": 20,
   "unit_tests_passed": 6,
-  "three_seed_training_completed": true,
   "full_study_numeric_reproduction": false,
-  "full_budget_sources_syntax_checked": true,
+  "optional_recalibration_test": "passed",
+  "optional_art_sensitivity_test": "passed",
+  "three_seed_training_rerun": false,
+  "previous_release_three_seed_training_completed": true,
   "runtime_versions": {
     "numpy": "2.2.0",
     "pandas": "2.3.2",
@@ -40,5 +98,6 @@
     "future_perturbation_max_risk_change": 0.0,
     "reference": "Means from training patients excluding evaluated fold; landmark and masks fixed.",
     "scope": "Native synthetic LSTM risk before calibration; full formal calibrated study IG is retained separately."
-  }
+  },
+  "test_date": "2026-09-16"
 }

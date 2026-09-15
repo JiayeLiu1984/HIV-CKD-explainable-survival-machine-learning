@@ -1,4 +1,5 @@
 """Frozen synthetic LSTM ensemble, then explicitly separate local recalibration."""
+import argparse
 import numpy as np
 import pandas as pd
 import torch, joblib
@@ -31,6 +32,7 @@ def external_arrays():
     return cont,binary,cat,mask,age,y,risk,np.asarray(pairs),pd.DataFrame(rows)
 
 def main():
+    parser=argparse.ArgumentParser();parser.add_argument("--with-recalibration",action="store_true");args=parser.parse_args()
     torch.set_num_threads(2);c,b,cat,mask,age,y,risk,pairs,meta=external_arrays();n=len(c);all_s=[]
     m=load_source('study_sources/dynamic/lstm_core.py');m.EXPECTED_DEVELOPMENT_N=n
     for fold in range(5):
@@ -58,21 +60,24 @@ def main():
         select=meta.landmark_index.to_numpy()==lm;primary[select]=apply_offsets(h[select],offsets[lm])
     out=WORK/'external_validation';out.mkdir(exist_ok=True);np.save(out/'primary_frozen_survival.npy',primary)
     meta.to_csv(out/'external_metadata.csv',index=False);metrics(meta,primary).to_csv(out/'primary_performance.csv',index=False)
-    # Secondary adaptation uses a patient-level five-fold assignment inside the synthetic external set.
-    outcomes=pd.read_csv(DATA/'synthetic_external.csv').drop_duplicates('ID').set_index('ID').CKDstatus
-    id_order=meta.ID.drop_duplicates().tolist();fold_map={}
-    for fold,(_,held) in enumerate(StratifiedKFold(5,shuffle=True,random_state=20260912).split(id_order,outcomes.loc[id_order])):
-        for i in held:fold_map[id_order[i]]=fold
-    meta['fold_id']=meta.ID.map(fold_map);yl=y[pairs[:,0],pairs[:,1]];ml=risk[pairs[:,0],pairs[:,1]]
-    secondary,_=calibrate(to_hazard(primary),yl,ml,meta)
-    np.save(out/'secondary_recalibrated_survival.npy',secondary);metrics(meta,secondary).to_csv(out/'secondary_performance.csv',index=False)
+    analyses=[("primary_frozen",primary)]
+    if args.with_recalibration:
+        # Secondary adaptation uses a patient-level five-fold assignment inside the synthetic external set.
+        outcomes=pd.read_csv(DATA/'synthetic_external.csv').drop_duplicates('ID').set_index('ID').CKDstatus
+        id_order=meta.ID.drop_duplicates().tolist();fold_map={}
+        for fold,(_,held) in enumerate(StratifiedKFold(5,shuffle=True,random_state=20260912).split(id_order,outcomes.loc[id_order])):
+            for i in held:fold_map[id_order[i]]=fold
+        meta['fold_id']=meta.ID.map(fold_map);yl=y[pairs[:,0],pairs[:,1]];ml=risk[pairs[:,0],pairs[:,1]]
+        secondary,_=calibrate(to_hazard(primary),yl,ml,meta)
+        np.save(out/'secondary_recalibrated_survival.npy',secondary);metrics(meta,secondary).to_csv(out/'secondary_performance.csv',index=False)
+        analyses.append(("secondary_local_recalibration",secondary))
     curves=[]
-    for label,s in [('primary_frozen',primary),('secondary_local_recalibration',secondary)]:
+    for label,s in analyses:
         for lm in range(6):
             idx=meta.landmark_index.to_numpy()==lm
             curves.extend({'analysis':label,'landmark':lm,**row} for row in dca(meta[idx],1-s[idx,-1]))
     pd.DataFrame(curves).to_csv(out/'decision_curves.csv',index=False)
-    dump_json(out/'scope.json',{'synthetic_only':True,'primary':'Development fold transforms, synthetic fold models and development calibration frozen. No external fitting.','secondary':'Separate cross-fitted intercept-only adaptation using synthetic external outcomes.','external_n':n,'all_ids_disjoint':True})
-    print('Frozen external prediction and secondary recalibration completed.')
+    dump_json(out/'scope.json',{'synthetic_only':True,'primary':'Development fold transforms, synthetic fold models and development calibration frozen. No external fitting.','secondary':'Separate cross-fitted intercept-only adaptation using synthetic external outcomes.','secondary_executed':args.with_recalibration,'external_n':n,'all_ids_disjoint':True})
+    print('Frozen external prediction completed; secondary recalibration:', args.with_recalibration)
 
 if __name__=='__main__':main()

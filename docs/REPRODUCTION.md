@@ -42,11 +42,11 @@ Passing the synthetic run establishes that the packaged interfaces and model com
 
 The primary four-model sources preserve an original 70/30 patient split, while prose referring to the full source cohort may use a different denominator. The locked internal-test results' connection to the final LSTM-v2 version remains a separate manuscript check. The source-cohort follow-up table is not the model-eligible risk-set table.
 
-The ART sensitivity source's evaluated population must still be matched to its 1,744/325/1,419 event accounting before that statement is finalized. The full source-cohort accounting of 2,491/469/2,022 must not be substituted. Modified D:A:D/VHA comparisons and unresolved diagnostic-code tables are not presented as confirmed reproduced results.
+For ART sensitivity, distinguish development-set event accounting (1,744/325/1,419) from source-cohort accounting (2,491/469/2,022); see ART_SOURCE_SCOPE.md and the retained aggregate verification. Modified D:A:D/VHA comparisons and unresolved diagnostic-code tables are not presented as confirmed reproduced results.
 
-## Legacy baseline code
+## Historical baseline code
 
-`legacy_baseline/cell_00.py` through `cell_09.py` retain every source cell in the supplied `CKD-ML.ipynb`, including alternate versions. `module_01_*` through `module_05_*` are the earlier organized scripts. Use the generated numeric `data/example_dataset.csv` with the organized modules in an isolated directory. Do not run all ten historical cells as a new unified pipeline or use their output as the revised longitudinal analysis. Optional legacy-only dependencies are listed separately.
+The earlier baseline scripts remain available in Git history at commit `4538bff`. They are not required for the revised main workflow.
 
 ## Sharing
 

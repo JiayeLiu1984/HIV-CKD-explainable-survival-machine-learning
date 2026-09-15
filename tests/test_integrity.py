@@ -34,7 +34,7 @@ class IntegrityTests(unittest.TestCase):
         a=json.loads((WORK/'interpretation/verification.json').read_text());self.assertLess(a['future_perturbation_max_risk_change'],1e-6);self.assertLess(a['max_completeness_residual'],1e-3)
     def test_external_scope(self):
         a=json.loads((WORK/'external_validation/scope.json').read_text());self.assertTrue(a['synthetic_only'])
-        for name in ['primary_frozen_survival.npy','secondary_recalibrated_survival.npy']:
+        for name in ['primary_frozen_survival.npy'] + (['secondary_recalibrated_survival.npy'] if a['secondary_executed'] else []):
             s=np.load(WORK/'external_validation'/name);self.assertTrue(np.isfinite(s).all());self.assertTrue((np.diff(s,axis=1)<=1e-6).all())
 
 if __name__=='__main__':unittest.main()

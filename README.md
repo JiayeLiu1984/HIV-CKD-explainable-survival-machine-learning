@@ -13,7 +13,6 @@ data/                 Independently generated development, external and baseline
 scripts/              Numbered portable test modules and full-source runner
 configs/              Public model hyperparameters and configuration example
 study_sources/        Retained study implementations, organized by analysis
-legacy_baseline/      CKD-ML.ipynb source cells and the earlier five-module workflow
 docs/                 Result-to-code mapping, provenance, scope and reproduction notes
 tests/                Data, splitting, probability and future-information checks
 results/              Created locally at runtime; not shipped
@@ -38,11 +37,15 @@ From the release directory:
 
 ```bash
 python scripts/run_all.py
-# Also perform three actual five-fold LSTM training-seed runs:
+# Optional analyses, excluded from the default run:
+python scripts/run_all.py --with-sensitivity
+python scripts/run_all.py --with-recalibration
 python scripts/run_all.py --three-seeds
 ```
 
 Each run writes to a fresh timestamped `results/synthetic_*` directory. No original paths are searched. The default dataset contains 600 fictitious development subjects and 240 independent fictitious external subjects; the 70/30 patient split in the supplied native source is preserved. Neural models run for 2 epochs with one seed/snapshot per fold; the RSF test uses one trial and 32 final trees. These are explicitly reduced test settings, not manuscript settings. Use `--n`, `--external-n`, `--epochs`, and `--bootstrap` to adjust the test.
+
+The default order is **random data → preprocessing → four-model training and comparison → frozen LSTM external validation → risk stratification → interpretation**. LSTM is the model selected in the study; the demo does not reselect the external model from random-data rankings. A `RUN_SUMMARY.json` records settings, stage durations and status; `logs/` contains full execution logs. Sensitivity analyses are opt-in. See [reviewer traceability](docs/REVIEWER_CODE_MAP.md). The default CPU integration run took about 49 seconds on the tested workstation; time varies by hardware.
 
 For stepwise execution, use the following order. By default, individual modules share `results/synthetic_run`; optionally set `CKD_WORKDIR` to another empty result directory before starting.
 
@@ -52,9 +55,9 @@ For stepwise execution, use the following order. By default, individual modules 
 | `module_01_data_preprocessing.py` | Synthetic longitudinal table | Native patient split, five folds, labels, tensors, 146 history summaries |
 | `module_02_model_training.py` | Fold data | Five-fold Cox/RSF/RNN/LSTM survival predictions |
 | `module_03_model_evaluation.py` | Predictions and simulated outcomes | Cross-fit calibration, Uno C-index, iAUC, IBS, DCA, paired patient bootstrap |
-| `module_04_external_validation.py` | Synthetic external table, frozen synthetic models | Primary frozen external predictions; separate secondary local recalibration |
-| `module_05_interpretation.py` | Synthetic fold model and fold inputs | IG completeness, global attribution, temporal occlusion, future-input check |
-| `module_06_risk_groups_and_figures.py` | Calibrated synthetic predictions | Risk groups, transferred cutpoints, characteristics, two example figures |
+| `module_04_external_validation.py` | Synthetic external table, frozen synthetic models | Primary frozen external predictions; local recalibration only with `--with-recalibration` |
+| `module_05_risk_groups_and_figures.py` | Calibrated synthetic predictions | Risk groups, transferred cutpoints, characteristics, two example figures |
+| `module_06_interpretation.py` | Synthetic fold model and fold inputs | IG completeness, global attribution, temporal occlusion, future-input check |
 | `module_07_sensitivity.py` | Synthetic outcomes/predictions | Event-to-censoring analysis; optional three training seeds |
 
 ## Retained study code
@@ -77,4 +80,4 @@ Models predict a single right-censored CKD outcome. Death is not separately mode
 
 Primary external validation keeps the development model, preprocessing and calibration frozen. Local external recalibration is a separate secondary analysis. The centre-rotation source uses three inner folds and three seeds, with original locked internal-test subjects excluded and previously processed inputs retained; it is not a fully nested reconstruction of preprocessing and model selection.
 
-The historical baseline RSF/SHAP code is in `legacy_baseline/`; it is not the revised LSTM/IG analysis. Historical duplicates are retained only there. Use `scripts/run_all.py` for the current synthetic demonstration. Git history preserves the earlier public baseline workflow.
+The earlier baseline RSF/SHAP workflow is preserved in Git history at commit `4538bff`; the current checkout focuses on the revised longitudinal analysis.
