@@ -1,0 +1,14 @@
+{
+  "seed": 20260912,
+  "source_n": 600,
+  "external_n": 240,
+  "epochs": 2,
+  "folds": 5,
+  "cox_penalizer": 1.0,
+  "rsf_trees": 32,
+  "rsf_min_leaf": 10,
+  "hidden_size": 24,
+  "batch_size": 256,
+  "learning_rate": 0.003,
+  "ig_steps": 256
+}

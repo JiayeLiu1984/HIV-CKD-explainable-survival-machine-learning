@@ -1,0 +1,95 @@
+{
+  "synthetic_only": true,
+  "configuration": {
+    "seed": 20260912,
+    "source_n": 600,
+    "external_n": 240,
+    "epochs": 2,
+    "folds": 5,
+    "cox_penalizer": 1.0,
+    "rsf_trees": 32,
+    "rsf_min_leaf": 10,
+    "hidden_size": 24,
+    "batch_size": 256,
+    "learning_rate": 0.003,
+    "ig_steps": 256
+  },
+  "stages": [
+    {
+      "name": "01_generate_synthetic_data.py",
+      "seconds": 1.77,
+      "returncode": 0
+    },
+    {
+      "name": "02_split_and_prepare_data.py",
+      "seconds": 1.38,
+      "returncode": 0
+    },
+    {
+      "name": "03_development_cv_models.py",
+      "seconds": 67.73,
+      "returncode": 0
+    },
+    {
+      "name": "04_model_comparison_and_lock.py",
+      "seconds": 4.24,
+      "returncode": 0
+    },
+    {
+      "name": "05_internal_test_evaluation.py",
+      "seconds": 23.89,
+      "returncode": 0
+    },
+    {
+      "name": "06_external_validation.py",
+      "seconds": 28.7,
+      "returncode": 0
+    },
+    {
+      "name": "07_risk_stratification.py",
+      "seconds": 4.55,
+      "returncode": 0
+    },
+    {
+      "name": "08_model_interpretation.py",
+      "seconds": 30.67,
+      "returncode": 0
+    },
+    {
+      "name": "isolation_checks",
+      "seconds": 55.19,
+      "returncode": 0
+    }
+  ],
+  "status": "passed",
+  "elapsed_seconds": 218.11,
+  "test_date": "2026-09-16",
+  "checks_passed": 6,
+  "source_n": 600,
+  "development_n": 420,
+  "internal_test_n": 180,
+  "external_n": 240,
+  "clinical_data_used": false,
+  "clinical_models_retrained": false,
+  "runtime_versions": {
+    "numpy": "2.2.0",
+    "pandas": "2.3.2",
+    "scipy": "1.15.3",
+    "scikit-learn": "1.7.1",
+    "scikit-survival": "0.25.0",
+    "lifelines": "0.30.0",
+    "torch": "2.13.0+cpu",
+    "matplotlib": "3.10.6",
+    "joblib": "1.5.2"
+  },
+  "interpretation_check": {
+    "dataset": "internal_test",
+    "background_source": "development training patients only",
+    "scope": "Small illustrative sample; not a whole-cohort attribution estimate.",
+    "interpretation": "Predictive attribution, not causal effects.",
+    "n_examples": 12,
+    "max_completeness_residual": 3.241002559661865e-07,
+    "future_input_max_risk_change": 0.0,
+    "frozen_prediction_max_error": 8.269015805417723e-08
+  }
+}

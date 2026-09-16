@@ -1,2 +1,4 @@
-# Preserve released bytes, including synthetic-data provenance hashes.
-* -text
+* text=auto
+*.py text eol=lf
+*.md text eol=lf
+*.json text eol=lf
