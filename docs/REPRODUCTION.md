@@ -1,3 +1,9 @@
+# Current execution contract
+
+Run scripts/run_all.py for development-only five-fold comparison, model locking, reserved internal-test evaluation, frozen external validation and test-set interpretation. See DATASET_RESULT_MAP.md. The selected predictor is a five-fold LSTM ensemble with frozen development calibration, not an all-development single-model refit.
+
+The remainder documents historical full-study source order and limitations. Historical development comparison outputs are not independent internal-test results. Do not use their clinical estimates as such.
+
 # Reproduction guide and analytical boundaries
 
 ## Two execution modes

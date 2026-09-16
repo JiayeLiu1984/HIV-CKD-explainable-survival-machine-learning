@@ -1,3 +1,7 @@
+# Historical manuscript-result provenance (previous analysis)
+
+This table records the earlier supplied manuscript and sources, not the new internal-test estimates. Do not relabel these development-based clinical numbers as independent test results. The active output contract is [DATASET_RESULT_MAP.md](DATASET_RESULT_MAP.md). Clinical results have not been recomputed.
+
 # Result to code mapping
 
 This mapping retains the supplementary identifiers from the 14 September version and was cross-checked against the supplied Manuscript_ckd_dl.docx and Response to reviewers.docx. Section topics and source paths are the stable identifiers if submission numbering changes. Synthetic runs do not reproduce clinical estimates.

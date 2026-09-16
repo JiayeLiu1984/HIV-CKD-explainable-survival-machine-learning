@@ -12,8 +12,8 @@ CONT=['Age','BMI']+LABS+[a+'_cum_month' for a in ART]
 BIN=['Oppinfection']+STATUS+MEDS+['current_'+a for a in ART]
 CAT=['Sex','Marriage','Course','WHOstage']
 
-def external_arrays():
-    d=pd.read_csv(DATA/'synthetic_external.csv',dtype={'ID':str,'WHOstage':str});ids=sorted(d.ID.unique());n=len(ids)
+def panel_arrays(d):
+    ids=sorted(d.ID.unique());n=len(ids)
     cont=np.zeros((n,11,len(CONT)),np.float32);binary=np.zeros((n,11,len(BIN)),np.float32);cat=np.full((n,11,4),'__NO_TIME_ROW__',dtype=object);mask=np.zeros((n,11),bool)
     y=np.zeros((n,6,10),np.float32);risk=np.zeros_like(y);pairs=[];rows=[];age=np.zeros(n,np.float32)
     lookup={s:i for i,s in enumerate(ids)}
@@ -31,9 +31,10 @@ def external_arrays():
             pairs.append((i,lm));rows.append({'ID':ident,'local_patient_index':i,'landmark_index':lm,'landmark_month':s,'analysis_time_month':min(rem,60),'event_within_60m':int(event and rem<=60)})
     return cont,binary,cat,mask,age,y,risk,np.asarray(pairs),pd.DataFrame(rows)
 
-def main():
-    parser=argparse.ArgumentParser();parser.add_argument("--with-recalibration",action="store_true");args=parser.parse_args()
-    torch.set_num_threads(2);c,b,cat,mask,age,y,risk,pairs,meta=external_arrays();n=len(c);all_s=[]
+def frozen_members(d):
+    """Build datasets using development-fitted transforms and frozen models."""
+    torch.set_num_threads(2)
+    c,b,cat,mask,age,y,risk,pairs,meta=panel_arrays(d);n=len(c);members=[]
     m=load_source('study_sources/dynamic/lstm_core.py');m.EXPECTED_DEVELOPMENT_N=n
     for fold in range(5):
         prep=joblib.load(WORK/f'rolling_5y_step4_preprocessed/fold_{fold}/preprocessor.joblib')
@@ -46,6 +47,18 @@ def main():
         ds=m.EnhancedPatientLandmarkDataset(pairs,enhanced,mask,x[:,0,[names.index(k) for k in static_names]],age,y,risk,prep['scaler'].mean_[0],prep['scaler'].scale_[0])
         checkpoint=torch.load(WORK/f'synthetic_lstm_fold_{fold}.pt',map_location='cpu',weights_only=False)
         assert checkpoint['synthetic_only'];model=m.build_model(checkpoint['parameters'],torch.device('cpu'));model.load_state_dict(checkpoint['state']);model.eval()
+        members.append((m,model,ds))
+    return members,meta,y,risk,pairs
+
+
+def frozen_predict(d):
+    """Identical frozen predictor for internal test and external validation."""
+    import json,hashlib
+    lock=json.loads((WORK/'model_lock.json').read_text(encoding='utf-8'))
+    for name,digest in lock['artifact_sha256'].items():
+        assert hashlib.sha256((WORK/name).read_bytes()).hexdigest()==digest,name
+    members,meta,y,risk,pairs=frozen_members(d);all_s=[]
+    for m,model,ds in members:
         hazards=[]
         with torch.no_grad():
             for raw in torch.utils.data.DataLoader(ds,batch_size=256):
@@ -55,9 +68,16 @@ def main():
         all_s.append(np.cumprod(1-np.concatenate(hazards),axis=1))
     raw_s=np.mean(all_s,axis=0);h=to_hazard(raw_s)
     # Development-fitted calibration is frozen before any external outcome use.
-    offsets=np.load(WORK/'evaluation/lstm_development_offsets.npy');primary=np.empty_like(raw_s)
+    offsets=np.load(WORK/'development_cv/lstm_development_offsets.npy');primary=np.empty_like(raw_s)
     for lm in range(6):
         select=meta.landmark_index.to_numpy()==lm;primary[select]=apply_offsets(h[select],offsets[lm])
+    return meta,primary,y,risk,pairs
+
+
+def main():
+    parser=argparse.ArgumentParser();parser.add_argument("--with-recalibration",action="store_true");args=parser.parse_args()
+    d=pd.read_csv(DATA/'synthetic_external.csv',dtype={'ID':str,'WHOstage':str})
+    meta,primary,y,risk,pairs=frozen_predict(d);n=d.ID.nunique()
     out=WORK/'external_validation';out.mkdir(exist_ok=True);np.save(out/'primary_frozen_survival.npy',primary)
     meta.to_csv(out/'external_metadata.csv',index=False);metrics(meta,primary).to_csv(out/'primary_performance.csv',index=False)
     analyses=[("primary_frozen",primary)]
@@ -77,7 +97,7 @@ def main():
             idx=meta.landmark_index.to_numpy()==lm
             curves.extend({'analysis':label,'landmark':lm,**row} for row in dca(meta[idx],1-s[idx,-1]))
     pd.DataFrame(curves).to_csv(out/'decision_curves.csv',index=False)
-    dump_json(out/'scope.json',{'synthetic_only':True,'primary':'Development fold transforms, synthetic fold models and development calibration frozen. No external fitting.','secondary':'Separate cross-fitted intercept-only adaptation using synthetic external outcomes.','secondary_executed':args.with_recalibration,'external_n':n,'all_ids_disjoint':True})
+    dump_json(out/'scope.json',{'synthetic_only':True,'primary':'Development fold transforms, synthetic fold models and development calibration frozen. No external fitting.','secondary':'Separate cross-fitted intercept-only adaptation using synthetic external outcomes.','secondary_executed':args.with_recalibration,'external_n':int(n),'dataset':'external_validation','model_artifact':'development-selected frozen five-fold LSTM ensemble','all_ids_disjoint':True})
     print('Frozen external prediction completed; secondary recalibration:', args.with_recalibration)
 
 if __name__=='__main__':main()

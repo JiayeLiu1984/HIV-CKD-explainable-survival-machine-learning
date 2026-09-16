@@ -1,4 +1,4 @@
-"""Demonstration cross-fit calibration, censoring-aware metrics and paired bootstrap.
+"""Development-only cross-validation comparison and calibration, not final internal evaluation.
 
 For the full study implementation, see 11a_four_model_calibration_comparison.py.
 All bootstrap samples use patient clusters shared by models and landmarks.
@@ -86,7 +86,7 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('--bootstrap',type=int,default=20);a=p.parse_args()
     base=WORK/'rolling_5y_step6_super_landmark_data';meta=pd.read_csv(base/'super_landmark_development_metadata.csv')
     y=np.load(base/'development_future_event_long.npy');mask=np.load(base/'development_future_at_risk_long.npy')
-    out=WORK/'evaluation';out.mkdir(exist_ok=True);survivals={};tables=[];calibration=[];decisions=[]
+    out=WORK/'development_cv';out.mkdir(exist_ok=True);survivals={};tables=[];calibration=[];decisions=[]
     for model in ['cox','rsf','rnn','lstm']:
         s0=np.load(WORK/'demo_predictions'/f'{model}_survival.npy');s,offsets=calibrate(to_hazard(s0),y,mask,meta)
         survivals[model]=s;np.save(out/f'{model}_calibrated_survival.npy',s);np.save(out/f'{model}_development_offsets.npy',offsets)
@@ -114,7 +114,22 @@ def main():
             diff=(aa[metric]-bb[metric]).dropna()
             pairs.append({'first_model':first,'second_model':second,'metric':metric,'difference':overall.loc[first,metric]-overall.loc[second,metric],'lower_95':diff.quantile(.025),'upper_95':diff.quantile(.975),'valid_bootstraps':len(diff)})
     pd.DataFrame(pairs).to_csv(out/'paired_model_comparisons.csv',index=False)
-    dump_json(out/'evaluation_notes.json',{'synthetic_only':True,'bootstrap_n':a.bootstrap,'bootstrap_unit':'patient, shared across models and landmarks','calibration':'Cross-fitted interval intercepts by landmark; final development offsets fitted on OOF predictions for synthetic external application.','censoring_reference':'Fixed synthetic development reference; conditional bootstrap uncertainty.','limitation':'Synthetic enriched event distribution and very short training; no manuscript estimates reproduced. Use original study_sources for full study calibration and CI implementation.'})
+    dump_json(out/'evaluation_notes.json',{'synthetic_only':True,'bootstrap_n':a.bootstrap,'bootstrap_unit':'patient, shared across models and landmarks','calibration':'Cross-fitted interval intercepts by landmark; final development offsets fitted on development cross-validation predictions and frozen for internal test and external application.','censoring_reference':'Fixed synthetic development reference; conditional bootstrap uncertainty.','limitation':'Synthetic enriched event distribution and very short training; no manuscript estimates reproduced. Use original study_sources for full study calibration and CI implementation.'})
+    # The published study selected LSTM during development. A random-data demo
+    # must not claim to reproduce that scientific selection or force its ranking.
+    import hashlib
+    artifacts=[WORK/f'synthetic_lstm_fold_{k}.pt' for k in range(5)]
+    artifacts += [WORK/f'rolling_5y_step4_preprocessed/fold_{k}/preprocessor.joblib' for k in range(5)]
+    artifacts += [out/'lstm_development_offsets.npy']
+    dump_json(WORK/'model_lock.json',{
+        'synthetic_only':True,'selected_model':'lstm',
+        'selection_source':'LSTM fixed from the manuscript development-stage selection; synthetic CV compares implementation behavior, not a new scientific model-selection result.',
+        'development_ids':sorted(meta.ID.unique().tolist()),
+        'internal_test_used_for_selection':False,'external_used_for_selection':False,
+        'calibration_fit_dataset':'development set only',
+        'predictor':'mean survival from five development fold models, then frozen development calibration',
+        'artifact_sha256':{str(f.relative_to(WORK)):hashlib.sha256(f.read_bytes()).hexdigest() for f in artifacts}})
+    print('Development-only cross-validation comparison; not final internal evaluation.')
     print(overall)
 
 if __name__=='__main__':main()

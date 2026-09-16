@@ -32,6 +32,7 @@ def main():
         ['module_01_data_preprocessing.py'],
         ['module_02_model_training.py', '--epochs', str(a.epochs)],
         ['module_03_model_evaluation.py', '--bootstrap', str(a.bootstrap)],
+        ['module_03b_internal_validation.py', '--bootstrap', str(a.bootstrap)],
         ['module_04_external_validation.py'] + (['--with-recalibration'] if a.with_recalibration else []),
         ['module_05_risk_groups_and_figures.py'],
         ['module_06_interpretation.py'],

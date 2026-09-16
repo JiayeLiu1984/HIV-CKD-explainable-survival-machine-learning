@@ -13,12 +13,12 @@ def main():
     panel=pd.read_csv(DATA/'synthetic_development.csv').drop_duplicates('ID').set_index('ID')
     affected=meta.ID.map(panel.synthetic_art_affected).astype(bool).to_numpy();alt=meta.copy()
     alt.loc[affected,'event_within_60m']=0
-    s=np.load(WORK/'evaluation/lstm_calibrated_survival.npy')
+    s=np.load(WORK/'development_cv/lstm_calibrated_survival.npy')
     primary=metrics(meta,s);sensitivity=metrics(alt,s)
     joined=primary.merge(sensitivity,on='landmark_index',suffixes=('_primary','_sensitivity'))
     for k in ['Uno_C_index','iAUC','IBS']:joined[k+'_difference']=joined[k+'_sensitivity']-joined[k+'_primary']
     joined.to_csv(out/'art_event_to_censoring.csv',index=False)
-    info={'synthetic_only':True,'art_sensitivity':'Recode simulated affected events to censoring at the same time; frozen predictions. No relabelling of any clinical data.','three_seeds_executed':args.three_seeds}
+    info={'synthetic_only':True,'dataset':'development_cross_validation_diagnostic_not_final_internal_test','art_sensitivity':'Recode simulated affected events to censoring at the same time; frozen predictions. No relabelling of any clinical data.','three_seeds_executed':args.three_seeds}
     if args.three_seeds:
         y=np.load(base/'development_future_event_long.npy');mask=np.load(base/'development_future_at_risk_long.npy');tables=[]
         for seed in [20260912,20261012,20261112]:

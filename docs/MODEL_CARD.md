@@ -2,7 +2,7 @@
 
 Research model for updated five-year CKD risk among adults receiving ART in participating Chinese HIV-care cohorts. Prediction landmarks occur from ART initiation through year five. This is not a validated treatment recommendation system.
 
-The revised primary model is a longitudinal LSTM-v2; comparator strategies are landmark Cox, RSF and RNN. Main internal performance uses patient-level five-fold development-set OOF predictions. A reserved 30% internal test split exists but is not the source of reported OOF estimates. Primary Chongqing predictions use frozen development preprocessing, model weights and calibration. Secondary local calibration and post hoc centre rotation have different training scopes.
+The runnable model is the study-selected longitudinal LSTM, with Cox, RSF and RNN development comparators. Development patients are used for construction, five-fold comparison and calibration. Final internal performance now uses the reserved 30% test patients only. The predictor is a frozen ensemble of the five development-fold LSTMs, corresponding preprocessing and development-derived calibration. Independent external validation applies the same artifacts unchanged. Historical manuscript performance numbers have not been recalculated and must not be relabeled as internal-test estimates.
 
 Death is right-censored. Output is not a competing-risk cumulative incidence. External absolute risks were overestimated. Cohorts are predominantly male; transportability outside participating centres is unestablished. IG explains predictions, not causal effects. Tertile and fixed risk bands are descriptive.
 

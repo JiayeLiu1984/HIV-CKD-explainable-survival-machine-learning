@@ -12,67 +12,67 @@
   "stages": [
     {
       "name": "module_00_generate_synthetic_data.py",
-      "seconds": 1.02,
+      "seconds": 0.89,
       "returncode": 0,
       "log": "logs\\module_00_generate_synthetic_data.py.log"
     },
     {
       "name": "module_01_data_preprocessing.py",
-      "seconds": 2.52,
+      "seconds": 5.52,
       "returncode": 0,
       "log": "logs\\module_01_data_preprocessing.py.log"
     },
     {
       "name": "module_02_model_training.py",
-      "seconds": 26.08,
+      "seconds": 27.67,
       "returncode": 0,
       "log": "logs\\module_02_model_training.py.log"
     },
     {
       "name": "module_03_model_evaluation.py",
-      "seconds": 4.8,
+      "seconds": 4.76,
       "returncode": 0,
       "log": "logs\\module_03_model_evaluation.py.log"
     },
     {
+      "name": "module_03b_internal_validation.py",
+      "seconds": 4.44,
+      "returncode": 0,
+      "log": "logs\\module_03b_internal_validation.py.log"
+    },
+    {
       "name": "module_04_external_validation.py",
-      "seconds": 4.94,
+      "seconds": 4.05,
       "returncode": 0,
       "log": "logs\\module_04_external_validation.py.log"
     },
     {
       "name": "module_05_risk_groups_and_figures.py",
-      "seconds": 3.59,
+      "seconds": 3.11,
       "returncode": 0,
       "log": "logs\\module_05_risk_groups_and_figures.py.log"
     },
     {
       "name": "module_06_interpretation.py",
-      "seconds": 4.86,
+      "seconds": 13.62,
       "returncode": 0,
       "log": "logs\\module_06_interpretation.py.log"
     },
     {
       "name": "integrity_tests",
-      "seconds": 0.91,
+      "seconds": 3.86,
       "returncode": 0,
       "log": "logs\\integrity_tests.log"
     }
   ],
   "status": "passed",
-  "elapsed_seconds": 48.7,
-  "tested_models": [
-    "Landmark Cox",
-    "Landmark RSF",
-    "RNN",
-    "LSTM-v2"
-  ],
-  "unit_tests_passed": 6,
-  "full_study_numeric_reproduction": false,
-  "optional_recalibration_test": "passed",
-  "optional_art_sensitivity_test": "passed",
-  "three_seed_training_rerun": false,
-  "previous_release_three_seed_training_completed": true,
+  "elapsed_seconds": 67.92,
+  "test_date": "2026-09-16",
+  "source_cohort_n": 600,
+  "development_set_n": 420,
+  "internal_test_set_n": 180,
+  "external_n": 240,
+  "unit_tests_passed": 8,
   "runtime_versions": {
     "numpy": "2.2.0",
     "pandas": "2.3.2",
@@ -90,14 +90,32 @@
     "tqdm": "4.67.1",
     "numba": "0.61.2"
   },
+  "full_study_numeric_reproduction": false,
+  "clinical_models_retrained": false,
+  "synthetic_models_trained": true,
+  "optional_recalibration_test": "passed",
+  "optional_art_sensitivity_test": "passed",
+  "three_seed_training_rerun": false,
+  "internal_validation": {
+    "synthetic_only": true,
+    "dataset": "internal_test",
+    "n_patients": 180,
+    "selected_model": "lstm",
+    "used_for_training_tuning_selection_or_calibration": false,
+    "artifacts_unchanged": true,
+    "bootstrap_unit": "patient",
+    "censoring_distribution": "Estimated for evaluation only; never changes predictor or calibration",
+    "model_lock": "../model_lock.json"
+  },
   "interpretation": {
     "synthetic_only": true,
+    "dataset": "internal_test",
     "tested_origins": 12,
-    "IG_steps": 128,
-    "max_completeness_residual": 1.9650906324386597e-06,
+    "IG_steps": 256,
+    "max_completeness_residual": 2.644956111907959e-07,
     "future_perturbation_max_risk_change": 0.0,
-    "reference": "Means from training patients excluding evaluated fold; landmark and masks fixed.",
-    "scope": "Native synthetic LSTM risk before calibration; full formal calibrated study IG is retained separately."
-  },
-  "test_date": "2026-09-16"
+    "frozen_prediction_max_error": 1.7881393432617188e-07,
+    "reference": "Development fold-training means; fixed masks and landmarks.",
+    "scope": "Frozen calibrated five-member LSTM ensemble on internal test samples; no fitting."
+  }
 }

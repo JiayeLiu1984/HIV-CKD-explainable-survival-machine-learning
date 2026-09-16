@@ -32,6 +32,29 @@ class IntegrityTests(unittest.TestCase):
             s=np.load(WORK/'demo_predictions'/f'{model}_survival.npy');self.assertEqual(s.shape,(n,10));self.assertTrue(np.isfinite(s).all());self.assertTrue(((s>=0)&(s<=1)).all());self.assertTrue((np.diff(s,axis=1)<=1e-6).all())
     def test_future_information_and_IG(self):
         a=json.loads((WORK/'interpretation/verification.json').read_text());self.assertLess(a['future_perturbation_max_risk_change'],1e-6);self.assertLess(a['max_completeness_residual'],1e-3)
+    def test_locked_internal_evaluation(self):
+        from module_03b_internal_validation import verify_lock
+        lock=verify_lock()
+        meta=pd.read_csv(WORK/'internal_validation/internal_test_metadata.csv')
+        reserved=pd.read_csv(WORK/'rolling_5y_step6_super_landmark_data/super_landmark_test_metadata.csv')
+        self.assertEqual(set(meta.ID),set(reserved.ID))
+        self.assertFalse(set(meta.ID)&set(lock['development_ids']))
+        s=np.load(WORK/'internal_validation/lstm_frozen_survival.npy')
+        self.assertEqual(s.shape,(len(meta),10))
+        self.assertTrue(np.isfinite(s).all());self.assertTrue((np.diff(s,axis=1)<=1e-6).all())
+        table=pd.read_csv(WORK/'internal_validation/landmark_performance.csv')
+        self.assertEqual(set(table.dataset),{'internal_test'});self.assertEqual(set(table.model),{'lstm'})
+    def test_predictions_do_not_depend_on_test_outcomes(self):
+        from module_04_external_validation import frozen_predict
+        panel=pd.read_csv(ROOT/'data/synthetic_development.csv',dtype={'ID':str,'WHOstage':str})
+        meta=pd.read_csv(WORK/'internal_validation/internal_test_metadata.csv')
+        altered=panel[panel.ID.isin(meta.ID)].copy();altered['CKDstatus']=1-altered.CKDstatus
+        alt_meta,s,_,_,_=frozen_predict(altered)
+        original=np.load(WORK/'internal_validation/lstm_frozen_survival.npy')
+        left=meta[['ID','landmark_index']].assign(original_idx=np.arange(len(meta)))
+        right=alt_meta[['ID','landmark_index']].assign(altered_idx=np.arange(len(alt_meta)))
+        matched=left.merge(right,on=['ID','landmark_index']);self.assertGreater(len(matched),0)
+        np.testing.assert_allclose(original[matched.original_idx],s[matched.altered_idx],atol=1e-6)
     def test_external_scope(self):
         a=json.loads((WORK/'external_validation/scope.json').read_text());self.assertTrue(a['synthetic_only'])
         for name in ['primary_frozen_survival.npy'] + (['secondary_recalibrated_survival.npy'] if a['secondary_executed'] else []):
